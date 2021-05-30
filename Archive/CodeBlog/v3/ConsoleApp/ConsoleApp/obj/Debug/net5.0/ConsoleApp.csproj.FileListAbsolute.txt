@@ -1,0 +1,16 @@
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\bin\Debug\net5.0\ConsoleApp.exe
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\bin\Debug\net5.0\ConsoleApp.deps.json
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\bin\Debug\net5.0\ConsoleApp.runtimeconfig.json
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\bin\Debug\net5.0\ConsoleApp.runtimeconfig.dev.json
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\bin\Debug\net5.0\ConsoleApp.dll
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\bin\Debug\net5.0\ref\ConsoleApp.dll
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\bin\Debug\net5.0\ConsoleApp.pdb
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\obj\Debug\net5.0\ConsoleApp.csprojAssemblyReference.cache
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\obj\Debug\net5.0\ConsoleApp.GeneratedMSBuildEditorConfig.editorconfig
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\obj\Debug\net5.0\ConsoleApp.AssemblyInfoInputs.cache
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\obj\Debug\net5.0\ConsoleApp.AssemblyInfo.cs
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\obj\Debug\net5.0\ConsoleApp.csproj.CoreCompileInputs.cache
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\obj\Debug\net5.0\ConsoleApp.dll
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\obj\Debug\net5.0\ref\ConsoleApp.dll
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\obj\Debug\net5.0\ConsoleApp.pdb
+D:\JS\Max\CodeBlog\v3\ConsoleApp\ConsoleApp\obj\Debug\net5.0\ConsoleApp.genruntimeconfig.cache

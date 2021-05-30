@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "dgSpecHash": "6w0dJvIy4qj3c+rS/SLi3ZsfTZJAxh4KWrl5Wm7+L6f57E2vSwVwp6BX//n1fEtSjuewcx4T7owCrVvaoRq45w==",
+  "success": false,
+  "projectFilePath": "D:\\JS\\Max\\CodeBlog\\Blockchain\\BlockchainTests\\BlockchainTests.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1201",
+      "level": "Error",
+      "message": "Проект Blockchain несовместим с netstandard2.0 (.NETStandard,Version=v2.0). Проект Blockchain поддерживает: net5.0-windows7.0 (.NETCoreApp,Version=v5.0)",
+      "libraryId": "Blockchain",
+      "targetGraphs": [
+        ".NETStandard,Version=v2.0"
+      ]
+    }
+  ]
+}

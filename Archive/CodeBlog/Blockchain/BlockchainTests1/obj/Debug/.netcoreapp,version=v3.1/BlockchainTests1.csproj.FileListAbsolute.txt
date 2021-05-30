@@ -1,0 +1,4 @@
+D:\JS\Max\CodeBlog\Blockchain\BlockchainTests1\bin\Debug\.netcoreapp,version=v3.1\Blockchain.dll
+D:\JS\Max\CodeBlog\Blockchain\BlockchainTests1\obj\Debug\.netcoreapp,version=v3.1\BlockchainTests1.csprojAssemblyReference.cache
+D:\JS\Max\CodeBlog\Blockchain\BlockchainTests1\obj\Debug\.netcoreapp,version=v3.1\BlockchainTests1.AssemblyInfoInputs.cache
+D:\JS\Max\CodeBlog\Blockchain\BlockchainTests1\obj\Debug\.netcoreapp,version=v3.1\BlockchainTests1.AssemblyInfo.cs

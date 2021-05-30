@@ -1,0 +1,15 @@
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\bin\Debug\netcoreapp3.1\Blockchain.exe
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\bin\Debug\netcoreapp3.1\Blockchain.deps.json
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\bin\Debug\netcoreapp3.1\Blockchain.runtimeconfig.json
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\bin\Debug\netcoreapp3.1\Blockchain.runtimeconfig.dev.json
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\bin\Debug\netcoreapp3.1\Blockchain.dll
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\bin\Debug\netcoreapp3.1\Blockchain.pdb
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\obj\Debug\netcoreapp3.1\Blockchain.csprojAssemblyReference.cache
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\obj\Debug\netcoreapp3.1\Blockchain.Form1.resources
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\obj\Debug\netcoreapp3.1\Blockchain.csproj.GenerateResource.cache
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\obj\Debug\netcoreapp3.1\Blockchain.AssemblyInfoInputs.cache
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\obj\Debug\netcoreapp3.1\Blockchain.AssemblyInfo.cs
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\obj\Debug\netcoreapp3.1\Blockchain.csproj.CoreCompileInputs.cache
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\obj\Debug\netcoreapp3.1\Blockchain.dll
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\obj\Debug\netcoreapp3.1\Blockchain.pdb
+D:\JS\Max\CodeBlog\Blockchain\Blockchain\obj\Debug\netcoreapp3.1\Blockchain.genruntimeconfig.cache
