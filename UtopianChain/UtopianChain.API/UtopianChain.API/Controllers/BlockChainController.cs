@@ -7,9 +7,11 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using IdentityModel.Client;
 using UtopianChain.API.Core;
 using UtopianChain.API.DB.Context;
 using UtopianChain.API.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UtopianChain.API.Controllers
 {
@@ -21,6 +23,7 @@ namespace UtopianChain.API.Controllers
         private readonly UtopianMsSqlContext context;
         private readonly BlockFactory blockFactory;
         private readonly IHttpClientFactory httpClientFactory;
+        private readonly string uriServer = "https://localhost:44360";
 
         public BlockChainController(UtopianMsSqlContext context, BlockFactory blockFactory, IHttpClientFactory httpClientFactory)
         {
@@ -57,7 +60,7 @@ namespace UtopianChain.API.Controllers
             context.Blocks.Add(block);
             await context.SaveChangesAsync();
 
-            var localListBloks = context.Blocks.Select(_ => _).ToList();
+            var localListBloks = context.Blocks.Select(_ => _).ToList(); // TODO: Comment this
 
             InitializationActualizationNodes();
             //InitializationActualizationNodesMock();
@@ -74,11 +77,14 @@ namespace UtopianChain.API.Controllers
             var jsonData = JsonSerializer.Serialize(id);
             var httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
 
-            await client.PostAsync("https://localhost:44360/blockchain/actualization3", httpContent);
+            await client.PostAsync("https://localhost:44361/blockchain/actualization3", httpContent);
         }
 
         private async void InitializationActualizationNodes()
         {
+            
+
+
             //var listBloks = context.Blocks.Select(_ => _).ToList();
             List<Block> listBloks = context.Blocks.Select(_ => _).ToList<Block>();
             //var listBloks = context.Blocks.Select(_ => _);
@@ -86,7 +92,24 @@ namespace UtopianChain.API.Controllers
             BlockInputList blockInputList = new BlockInputList();
             blockInputList.Blocks = listBloks;
 
+            // retrieve auth
+            var authClient = httpClientFactory.CreateClient();
+            var discoveryDocument = await authClient.GetDiscoveryDocumentAsync("https://localhost:44325");
+            var tokenResponce = await authClient.RequestClientCredentialsTokenAsync(
+                new ClientCredentialsTokenRequest
+                {
+                    Address = discoveryDocument.TokenEndpoint,
+                    ClientId = "client_id",
+                    ClientSecret = "client_secret",
+                    Scope = "OrdersAPI"
+                }
+            );
+
             var client = httpClientFactory.CreateClient();
+
+            client.SetBearerToken(tokenResponce.AccessToken);
+
+            //client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenResponce.AccessToken);
 
             var jsonData = JsonSerializer.Serialize(blockInputList);
 
@@ -96,8 +119,38 @@ namespace UtopianChain.API.Controllers
             //var encodedContent = new FormUrlEncodedContent(jsonData);
             var httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
             //HttpContent content = httpContent;
-            await client.PostAsync("https://localhost:44361/blockchain/actualization1", httpContent);
+            //await client.PostAsync("https://localhost:44361/blockchain/actualization1", httpContent);
 
+            var nodes = await GetNodes();
+
+            foreach (string node in nodes)
+            {
+                if (node != uriServer)
+                {
+                    string uri = $"{node}/blockchain/actualization1";
+                    await client.PostAsync(uri, httpContent);
+                }
+            }
+        }
+
+        private async Task<List<string>> GetNodes()
+        {
+            var client = httpClientFactory.CreateClient();
+
+            var httpResponseMessage = await client.GetAsync("https://localhost:44325/nodes/getnodes");
+
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                //List<string> result = await httpResponseMessage.Content.;
+
+                var jsonString = await httpResponseMessage.Content.ReadAsStringAsync();
+                //List<string> result = JsonConvert.DeserializeObject<List<string>>(jsonString);
+                List<string> result = JsonSerializer.Deserialize<List<string>>(jsonString);
+
+                return result;
+            }
+
+            return new List<string>();
         }
 
         private bool Check(List<Block> blocks)
@@ -115,6 +168,8 @@ namespace UtopianChain.API.Controllers
             }
             return true;
         }
+
+        
 
         [HttpPost]
         [Route("actualization3")]
@@ -145,6 +200,7 @@ namespace UtopianChain.API.Controllers
 
         //[HttpPost("/actualization")]
         [HttpPost]
+        [Authorize]
         [Route("actualization1")]
         public async Task Actualization1([FromBody] BlockInputList blockInputList)
         //public async Task Actualization1([FromBody] List<Block> inputListBloks)
@@ -300,6 +356,22 @@ namespace UtopianChain.API.Controllers
             await context.SaveChangesAsync();
 
             return deleteBlock;
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        //public IQueryable<Vote> CountingVotes(int idElections)
+        public IQueryable<Vote> CountingVotes()
+        {
+            var votes = context.Blocks.GroupBy(_ => _.Data)
+                                            .Select(s => new Vote
+                                            {
+                                                Choice = s.Key,
+                                                ChoiceCount = s.Count()
+                                            }
+                                            );
+
+            return votes;
         }
     }
 }

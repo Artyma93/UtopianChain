@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using IdentityModel.Client;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -21,6 +23,7 @@ namespace UtopianChain.API.Controllers
         private readonly UtopianMsSqlContext context;
         private readonly BlockFactory blockFactory;
         private readonly IHttpClientFactory httpClientFactory;
+        private readonly string uriServer = "https://localhost:44361";
 
         public BlockChainController(UtopianMsSqlContext context, BlockFactory blockFactory, IHttpClientFactory httpClientFactory)
         {
@@ -86,7 +89,24 @@ namespace UtopianChain.API.Controllers
             BlockInputList blockInputList = new BlockInputList();
             blockInputList.Blocks = listBloks;
 
+            // retrieve auth
+            var authClient = httpClientFactory.CreateClient();
+            var discoveryDocument = await authClient.GetDiscoveryDocumentAsync("https://localhost:44325");
+            var tokenResponce = await authClient.RequestClientCredentialsTokenAsync(
+                new ClientCredentialsTokenRequest
+                {
+                    Address = discoveryDocument.TokenEndpoint,
+                    ClientId = "client_id",
+                    ClientSecret = "client_secret",
+                    Scope = "OrdersAPI"
+                }
+            );
+
             var client = httpClientFactory.CreateClient();
+
+            client.SetBearerToken(tokenResponce.AccessToken);
+
+            //client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenResponce.AccessToken);
 
             var jsonData = JsonSerializer.Serialize(blockInputList);
 
@@ -96,8 +116,38 @@ namespace UtopianChain.API.Controllers
             //var encodedContent = new FormUrlEncodedContent(jsonData);
             var httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
             //HttpContent content = httpContent;
-            await client.PostAsync("https://localhost:44360/blockchain/actualization1", httpContent);
+            //await client.PostAsync("https://localhost:44360/blockchain/actualization1", httpContent);
 
+            var nodes = await GetNodes();
+
+            foreach (string node in nodes)
+            {
+                if (node != uriServer)
+                {
+                    string uri = $"{node}/blockchain/actualization1";
+                    await client.PostAsync(uri, httpContent);
+                }
+            }
+        }
+
+        private async Task<List<string>> GetNodes()
+        {
+            var client = httpClientFactory.CreateClient();
+
+            var httpResponseMessage = await client.GetAsync("https://localhost:44325/nodes/getnodes");
+
+            if (httpResponseMessage.IsSuccessStatusCode)
+            {
+                //List<string> result = await httpResponseMessage.Content.;
+
+                var jsonString = await httpResponseMessage.Content.ReadAsStringAsync();
+                //List<string> result = JsonConvert.DeserializeObject<List<string>>(jsonString);
+                List<string> result = JsonSerializer.Deserialize<List<string>>(jsonString);
+
+                return result;
+            }
+
+            return new List<string>();
         }
 
         private bool Check(List<Block> blocks)
@@ -114,6 +164,14 @@ namespace UtopianChain.API.Controllers
 
             }
             return true;
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("[action]")]
+        public string Secret()
+        {
+            return "Secret string from Orders API";
         }
 
         [HttpPost]
@@ -145,10 +203,12 @@ namespace UtopianChain.API.Controllers
 
         //[HttpPost("/actualization")]
         [HttpPost]
+        [Authorize]
         [Route("actualization1")]
         public async Task Actualization1([FromBody] BlockInputList blockInputList)
         //public async Task Actualization1([FromBody] List<Block> inputListBloks)
         {
+            var test = 1;
             var inputListBloks = blockInputList.Blocks.ToList<Block>();
 
             var isCheck = Check(inputListBloks);
@@ -300,6 +360,22 @@ namespace UtopianChain.API.Controllers
             await context.SaveChangesAsync();
 
             return deleteBlock;
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        //public IQueryable<Vote> CountingVotes(int idElections)
+        public IQueryable<Vote> CountingVotes()
+        {
+            var votes = context.Blocks.GroupBy(_ => _.Data)
+                                            .Select(s => new Vote
+                                            { 
+                                                Choice = s.Key,
+                                                ChoiceCount = s.Count()
+                                            }
+                                            );
+
+            return votes;
         }
     }
 }

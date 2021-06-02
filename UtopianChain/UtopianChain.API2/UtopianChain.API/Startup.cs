@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,6 +33,13 @@ namespace UtopianChain.API
                        .AllowAnyHeader()
                        .WithExposedHeaders("WWW-Authenticate");
             }));
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, config =>
+                    {
+                        config.Authority = "https://localhost:44325";
+                        config.Audience = "OrdersAPI";
+                    });
 
             services.AddHttpClient();
             services.AddSingleton<BlockFactory>();

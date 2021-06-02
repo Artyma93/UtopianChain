@@ -304,3 +304,9 @@ D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.API\UtopianChain.API\obj\Debug
 D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.API\UtopianChain.API\obj\Debug\net5.0\ref\UtopianChain.API.dll
 D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.API\UtopianChain.API\obj\Debug\net5.0\UtopianChain.API.pdb
 D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.API\UtopianChain.API\obj\Debug\net5.0\UtopianChain.API.genruntimeconfig.cache
+D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.API\UtopianChain.API\bin\Debug\net5.0\IdentityModel.dll
+D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.API\UtopianChain.API\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.API\UtopianChain.API\bin\Debug\net5.0\System.Text.Encodings.Web.dll
+D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.API\UtopianChain.API\bin\Debug\net5.0\System.Text.Json.dll
+D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.API\UtopianChain.API\obj\Debug\net5.0\Razor\Views\Orders\GetOrders.cshtml.g.cs
+D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.API\UtopianChain.API\obj\Debug\net5.0\Razor\Views\Shared\_Menu.cshtml.g.cs
