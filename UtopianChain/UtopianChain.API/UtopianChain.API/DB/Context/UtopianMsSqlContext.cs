@@ -31,7 +31,7 @@ namespace UtopianChain.API.DB.Context
 
 
         public virtual DbSet<Block> Blocks { get; set; }
-
+        public virtual DbSet<Election> Elections { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -41,6 +41,7 @@ namespace UtopianChain.API.DB.Context
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new BlockConfiguration());
+            modelBuilder.ApplyConfiguration(new ElectionConfiguration());
         }
     }
 }

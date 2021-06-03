@@ -43,6 +43,7 @@ namespace UtopianChain.API
 
             services.AddHttpClient();
             services.AddSingleton<BlockFactory>();
+            services.AddSingleton<ElectionFactory>();
             services.AddDbContext<UtopianMsSqlContext>();
             services.AddControllers();
             services.AddControllersWithViews();

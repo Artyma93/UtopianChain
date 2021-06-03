@@ -10,7 +10,7 @@ namespace UtopianChain.API.Core
     {
         public Block CreateGenesisBlock()
         {
-            return new Block(DateTime.Now, "", "{}");
+            return new Block(DateTime.Now, "", "{}" );
         }
 
         public Block CreateBlock(DateTime timeStamp, string previousHash, string data)

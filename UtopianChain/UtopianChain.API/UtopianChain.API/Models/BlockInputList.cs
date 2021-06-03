@@ -8,7 +8,6 @@ namespace UtopianChain.API.Models
     public class BlockInputList
     {
         public List<Block> Blocks { get; set; }
-
         public BlockInputList()
         {
 

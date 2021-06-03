@@ -21,6 +21,7 @@ namespace UtopianChain.API.Models
         public string Hash { get; set; }
         public string Data { get; set; }
         public int Nonce { get; set; } = 0;
+        public int? Election { get; set; }
 
         public Block(DateTime timeStamp, string previousHash, string data)
         {

@@ -1,6 +1,4 @@
-﻿using IdentityModel.Client;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,9 +7,11 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using IdentityModel.Client;
 using UtopianChain.API.Core;
 using UtopianChain.API.DB.Context;
 using UtopianChain.API.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UtopianChain.API.Controllers
 {
@@ -23,13 +23,83 @@ namespace UtopianChain.API.Controllers
         private readonly UtopianMsSqlContext context;
         private readonly BlockFactory blockFactory;
         private readonly IHttpClientFactory httpClientFactory;
+        private readonly ElectionFactory electionFactory;
         private readonly string uriServer = "https://localhost:44361";
 
-        public BlockChainController(UtopianMsSqlContext context, BlockFactory blockFactory, IHttpClientFactory httpClientFactory)
+        public BlockChainController(UtopianMsSqlContext context, BlockFactory blockFactory, IHttpClientFactory httpClientFactory, ElectionFactory electionFactory)
         {
             this.context = context;
             this.blockFactory = blockFactory;
             this.httpClientFactory = httpClientFactory;
+            this.electionFactory = electionFactory;
+        }
+
+        [HttpPost]
+        [Route("[action]")]
+        //[HttpGet("{data}")]
+        public async Task<Election> CreateElection([FromBody] ElectionInput electionInput)
+        {
+            var data = electionInput.Description;
+
+            Election lastElection = context.Elections.OrderBy(_ => _.Id).LastOrDefault();
+            if (lastElection == null)
+            {
+                var genesisElection = electionFactory.CreateGenesisElection();
+                context.Elections.Add(genesisElection);
+                await context.SaveChangesAsync();
+            }
+
+            lastElection = context.Elections.OrderBy(_ => _.Id).LastOrDefault();
+
+            var stateElection = 1; // 1 == valid vote, 0 == completed voting
+
+            var election = electionFactory.CreateElection(lastElection, data, stateElection);
+            context.Elections.Add(election);
+            await context.SaveChangesAsync();
+
+            ActualizationElectionsInNodes();
+
+            return election;
+        }
+
+        private async void ActualizationElectionsInNodes()
+        {
+            List<Election> listElections = context.Elections.Select(_ => _).ToList<Election>();
+            ElectionInputList electionInputList = new ElectionInputList();
+
+            electionInputList.Elections = listElections;
+
+            // retrieve auth
+            var authClient = httpClientFactory.CreateClient();
+            var discoveryDocument = await authClient.GetDiscoveryDocumentAsync("https://localhost:44325");
+            var tokenResponce = await authClient.RequestClientCredentialsTokenAsync(
+                new ClientCredentialsTokenRequest
+                {
+                    Address = discoveryDocument.TokenEndpoint,
+                    ClientId = "client_id",
+                    ClientSecret = "client_secret",
+                    Scope = "OrdersAPI"
+                }
+            );
+
+            var client = httpClientFactory.CreateClient();
+
+            client.SetBearerToken(tokenResponce.AccessToken);
+
+            var jsonData = JsonSerializer.Serialize(electionInputList);
+
+            var httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+            var nodes = await GetNodes();
+
+            foreach (string node in nodes)
+            {
+                if (node != uriServer)
+                {
+                    string uri = $"{node}/blockchain/actualizationelections";
+                    await client.PostAsync(uri, httpContent);
+                }
+            }
         }
 
         // POST: BlockChainController/Create
@@ -60,24 +130,12 @@ namespace UtopianChain.API.Controllers
             context.Blocks.Add(block);
             await context.SaveChangesAsync();
 
-            var localListBloks = context.Blocks.Select(_ => _).ToList();
+            var localListBloks = context.Blocks.Select(_ => _).ToList(); // TODO: Comment this
 
             InitializationActualizationNodes();
             //InitializationActualizationNodesMock();
 
             return block;
-        }
-
-        private async void InitializationActualizationNodesMock()
-        {
-            int id = 1;
-
-            var client = httpClientFactory.CreateClient();
-
-            var jsonData = JsonSerializer.Serialize(id);
-            var httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
-
-            await client.PostAsync("https://localhost:44360/blockchain/actualization3", httpContent);
         }
 
         private async void InitializationActualizationNodes()
@@ -106,17 +164,11 @@ namespace UtopianChain.API.Controllers
 
             client.SetBearerToken(tokenResponce.AccessToken);
 
-            //client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenResponce.AccessToken);
-
             var jsonData = JsonSerializer.Serialize(blockInputList);
 
-            //var parameters = new Dictionary<string, string> { { "data", "Hello" } };
-            //HttpContent httpContent = new HttpContent(parameters);
-            //var jsonData = JsonSerializer.Serialize(block);
-            //var encodedContent = new FormUrlEncodedContent(jsonData);
             var httpContent = new StringContent(jsonData, Encoding.UTF8, "application/json");
             //HttpContent content = httpContent;
-            //await client.PostAsync("https://localhost:44360/blockchain/actualization1", httpContent);
+            //await client.PostAsync("https://localhost:44361/blockchain/actualization1", httpContent);
 
             var nodes = await GetNodes();
 
@@ -166,49 +218,104 @@ namespace UtopianChain.API.Controllers
             return true;
         }
 
-        [Authorize]
-        [HttpGet]
+        private bool CheckElections(List<Election> inputListElections)
+        {
+            var localListElections = context.Elections.Select(_ => _).ToList();
+
+            if (inputListElections.Count != localListElections.Count + 1)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < inputListElections.Count - 1; i++)
+            {
+                var inputElection = new ElectionRecord(inputListElections[i]);
+
+                var localElection = new ElectionRecord(localListElections[i]);
+
+                if (inputElection.Election.Description != localElection.Election.Description)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        [HttpPost]
         [Route("[action]")]
-        public string Secret()
+        public async Task ActualizationElections([FromBody] ElectionInputList electionInputList)
         {
-            return "Secret string from Orders API";
+            var inputListElections = electionInputList.Elections.ToList<Election>();
+
+            var isCheck = CheckElections(inputListElections);
+
+            if (isCheck)
+            {
+                var inputLastElection = inputListElections.Last();
+
+                var localLastElection = context.Elections.OrderBy(_ => _.Id).LastOrDefault();
+
+                if (localLastElection != null)
+                {
+                    context.Elections.Add(inputLastElection);
+                }
+                else
+                {
+                    var localListElections = context.Elections.Select(_ => _).ToList();
+
+                    //delete
+                    for (int i = 0; i <= localListElections.Count - 1; i++)
+                    {
+                        var idIncorrectElection = localListElections[i].Id;
+                        var deleteElection = await context.Elections.FindAsync(idIncorrectElection);
+
+                        context.Elections.Remove(deleteElection);
+                        await context.SaveChangesAsync();
+                    }
+
+                    //add
+                    for (int i = 0; i <= inputListElections.Count - 1; i++)
+                    {
+                        var election = inputListElections[i];
+                        context.Elections.Add(election);
+                        await context.SaveChangesAsync();
+                    }
+                }
+                await context.SaveChangesAsync();
+            }
+            else
+            {
+                var localListElections = context.Elections.Select(_ => _).ToList();
+                //delete
+                for (int i = 0; i <= localListElections.Count - 1; i++)
+                {
+                    var idIncorrectElection = localListElections[i].Id;
+                    var deleteElection = await context.Elections.FindAsync(idIncorrectElection);
+
+                    context.Elections.Remove(deleteElection);
+                    await context.SaveChangesAsync();
+                }
+
+                //add
+                for (int i = 0; i <= inputListElections.Count - 1; i++)
+                {
+                    var election = inputListElections[i];
+                    context.Elections.Add(election);
+                    await context.SaveChangesAsync();
+                }
+
+                await context.SaveChangesAsync();
+            }
+
         }
 
-        [HttpPost]
-        [Route("actualization3")]
-        public async Task Actualization3([FromBody] BlockInputList blockInputList)
-        {
-            var localId = blockInputList;
-
-            var id = 2;
-        }
-
-        [HttpPost]
-        [Route("actualization4")]
-        public async Task Actualization4([FromBody] List<Block> inputListBloks)
-        {
-            var localId = inputListBloks;
-
-            var id = 2;
-        }
-
-        [HttpPost]
-        [Route("actualization5")]
-        public async Task Actualization5([FromBody] IEnumerable<Block> inputListBloks)
-        {
-            var localId = inputListBloks;
-
-            var id = 2;
-        }
-
-        //[HttpPost("/actualization")]
         [HttpPost]
         [Authorize]
         [Route("actualization1")]
         public async Task Actualization1([FromBody] BlockInputList blockInputList)
         //public async Task Actualization1([FromBody] List<Block> inputListBloks)
         {
-            var test = 1;
             var inputListBloks = blockInputList.Blocks.ToList<Block>();
 
             var isCheck = Check(inputListBloks);
@@ -252,46 +359,9 @@ namespace UtopianChain.API.Controllers
                         for (int i = 0; i <= inputListBloks.Count - 1; i++)
                         {
                             var block = inputListBloks[i];
-                            //context.Blocks.Add(block);
                             context.Add(block);
                             await context.SaveChangesAsync();
                         }
-
-                        //for (int i = 0; i < inputListBloks.Count; i++)
-                        //{
-                        //    if (i < countLocalListBlocks - 1)
-                        //    {
-                        //        if (inputListBloks[i].Hash != localListBloks[i].Hash)
-                        //        {
-                        //            var idIncorrectBlock = localListBloks[i].Id;
-                        //            var incorrectBlock = localListBloks[i];
-                        //            incorrectBlock.TimeStamp = inputListBloks[i].TimeStamp;
-                        //            incorrectBlock.PreviousHash = inputListBloks[i].PreviousHash;
-                        //            incorrectBlock.Hash = inputListBloks[i].Hash;
-                        //            incorrectBlock.Data = inputListBloks[i].Data;
-                        //            incorrectBlock.Nonce = inputListBloks[i].Nonce;
-
-
-                        //            var deleteBlock = await context.Blocks.FindAsync(idIncorrectBlock);
-
-                        //            context.Blocks.Remove(deleteBlock);
-                        //            await context.SaveChangesAsync();
-
-                        //            //var deleteBlock = await context.Blocks.FindAsync(idIncorrectBlock);
-                        //            //context.Blocks.Remove(deleteBlock);
-                        //            ////context.Add(inputListBloks[i]);
-
-                        //            ////context.Blocks.Update(_ => _.);
-                        //            //await context.SaveChangesAsync();
-                        //        }
-                        //    }
-                        //    else
-                        //    {
-                        //        var block = inputListBloks[i];
-                        //        context.Add(block);
-                        //        await context.SaveChangesAsync();
-                        //    }
-                        //}
                     }
 
                     await context.SaveChangesAsync();
@@ -312,56 +382,6 @@ namespace UtopianChain.API.Controllers
             //return block;
         }
 
-        [HttpPost]
-        [Route("actualization2")]
-        public async Task<Block> Actualization2(string jsonData)
-        {
-            if (jsonData == null)
-            {
-                return default(Block);
-            }
-
-            Block block = JsonSerializer.Deserialize<Block>(jsonData);
-
-            context.Add(block);
-            await context.SaveChangesAsync();
-
-            return block;
-        }
-
-        [HttpGet]
-        [Route("last")]
-        public async Task<Block> Last()
-        {
-            var localLastBlock = context.Blocks.OrderBy(_ => _.Id).LastOrDefault();
-
-            return localLastBlock;
-        }
-
-        [HttpGet]
-        [Route("up")]
-        public async Task<Block> Up()
-        {
-            var genesisBlock = blockFactory.CreateGenesisBlock();
-            genesisBlock.Mine(2);
-
-            context.Update(genesisBlock);
-
-            return genesisBlock;
-        }
-
-        [HttpGet]
-        [Route("del/{id}")]
-        public async Task<Block> Del(int id)
-        {
-            var deleteBlock = await context.Blocks.FindAsync(id);
-
-            context.Blocks.Remove(deleteBlock);
-            await context.SaveChangesAsync();
-
-            return deleteBlock;
-        }
-
         [HttpGet]
         [Route("[action]")]
         //public IQueryable<Vote> CountingVotes(int idElections)
@@ -369,7 +389,7 @@ namespace UtopianChain.API.Controllers
         {
             var votes = context.Blocks.GroupBy(_ => _.Data)
                                             .Select(s => new Vote
-                                            { 
+                                            {
                                                 Choice = s.Key,
                                                 ChoiceCount = s.Count()
                                             }

@@ -10,8 +10,8 @@ using UtopianChain.API.DB.Context;
 namespace UtopianChain.API.Migrations
 {
     [DbContext(typeof(UtopianMsSqlContext))]
-    [Migration("20210528231249_Mig00001")]
-    partial class Mig00001
+    [Migration("20210603181642_Elections")]
+    partial class Elections
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,6 +29,9 @@ namespace UtopianChain.API.Migrations
                     b.Property<string>("Data")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("Election")
+                        .HasColumnType("int");
+
                     b.Property<string>("Hash")
                         .HasColumnType("nvarchar(max)");
 
@@ -44,6 +47,22 @@ namespace UtopianChain.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Blocks");
+                });
+
+            modelBuilder.Entity("UtopianChain.API.Models.Election", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Elections");
                 });
 #pragma warning restore 612, 618
         }
