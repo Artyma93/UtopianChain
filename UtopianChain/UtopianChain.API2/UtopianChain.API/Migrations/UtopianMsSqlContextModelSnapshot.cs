@@ -58,6 +58,9 @@ namespace UtopianChain.API.Migrations
                     b.Property<int>("State")
                         .HasColumnType("int");
 
+                    b.Property<string>("VotingOption")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Elections");

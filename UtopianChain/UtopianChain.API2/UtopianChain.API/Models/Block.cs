@@ -41,6 +41,16 @@ namespace UtopianChain.API.Models
             Hash = CalculateHash();
         }
 
+        public Block(DateTime timeStamp, Block previousBlock, string data, int electionId)
+        {
+            Id = previousBlock.Id + 1;
+            TimeStamp = timeStamp;
+            PreviousHash = previousBlock.Hash;
+            Data = data;
+            Hash = CalculateHash();
+            Election = electionId;
+        }
+
         public string CalculateHash()
         {
             SHA256 sha256 = SHA256.Create();

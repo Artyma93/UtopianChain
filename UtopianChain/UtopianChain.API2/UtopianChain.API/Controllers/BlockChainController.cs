@@ -37,9 +37,8 @@ namespace UtopianChain.API.Controllers
         [HttpPost]
         [Route("[action]")]
         //[HttpGet("{data}")]
-        public async Task<Election> CreateElection([FromBody] ElectionInput electionInput)
+        public async Task<List<Election>> CreateElection([FromBody] ElectionInputList electionInputList)
         {
-            var data = electionInput.Description;
 
             Election lastElection = context.Elections.OrderBy(_ => _.Id).LastOrDefault();
             if (lastElection == null)
@@ -49,17 +48,23 @@ namespace UtopianChain.API.Controllers
                 await context.SaveChangesAsync();
             }
 
-            lastElection = context.Elections.OrderBy(_ => _.Id).LastOrDefault();
+            foreach (var electionInput in electionInputList.Elections)
+            {
 
-            var stateElection = 1; // 1 == valid vote, 0 == completed voting
+                var data = electionInput.Description;
+                var votingOption = electionInput.VotingOption;
+                lastElection = context.Elections.OrderBy(_ => _.Id).LastOrDefault();
 
-            var election = electionFactory.CreateElection(lastElection, data, stateElection);
-            context.Elections.Add(election);
-            await context.SaveChangesAsync();
+                var stateElection = 1; // 1 == valid vote, 0 == completed voting
 
-            ActualizationElectionsInNodes();
+                var election = electionFactory.CreateElection(lastElection, data, stateElection, votingOption);
+                context.Elections.Add(election);
+                await context.SaveChangesAsync();
+            }
 
-            return election;
+            //ActualizationElectionsInNodes();
+
+            return electionInputList.Elections;
         }
 
         private async void ActualizationElectionsInNodes()
@@ -109,6 +114,7 @@ namespace UtopianChain.API.Controllers
         public async Task<Block> Create([FromBody] BlockInput blockInput)
         {
             var data = blockInput.Data;
+            int electionId = blockInput.Election;
 
             Block lastBlock = context.Blocks.OrderBy(_ => _.Id).LastOrDefault();
             if (lastBlock == null)
@@ -125,7 +131,7 @@ namespace UtopianChain.API.Controllers
 
             //var previousHash = lastBlock.Hash.ToString();
 
-            var block = blockFactory.CreateBlock(timeStamp, lastBlock, data);
+            var block = blockFactory.CreateBlock(timeStamp, lastBlock, data, electionId);
             block.Mine(2);
             context.Blocks.Add(block);
             await context.SaveChangesAsync();

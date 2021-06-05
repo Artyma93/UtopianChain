@@ -16,6 +16,11 @@ namespace UtopianChain.API.Core
         public Election CreateElection(Election previousElection, string description, int state)
         {
             return new Election() { Id = previousElection.Id + 1, Description = description, State = state };
-        } 
+        }
+
+        public Election CreateElection(Election previousElection, string description, int state, string votingOption)
+        {
+            return new Election() { Id = previousElection.Id + 1, Description = description, State = state, VotingOption = votingOption };
+        }
     }
 }

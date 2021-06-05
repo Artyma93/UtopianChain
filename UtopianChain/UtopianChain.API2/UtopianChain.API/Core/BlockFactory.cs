@@ -22,5 +22,10 @@ namespace UtopianChain.API.Core
         {
             return new Block(timeStamp, previousBlock, data);
         }
+
+        public Block CreateBlock(DateTime timeStamp, Block previousBlock, string data, int electionId)
+        {
+            return new Block(timeStamp, previousBlock, data, electionId);
+        }
     }
 }

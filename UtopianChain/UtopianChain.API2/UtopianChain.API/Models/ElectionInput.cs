@@ -9,5 +9,6 @@ namespace UtopianChain.API.Models
     public class ElectionInput
     {
         public string Description { get; set; }
+        public string VotingOption { get; set; }
     }
 }

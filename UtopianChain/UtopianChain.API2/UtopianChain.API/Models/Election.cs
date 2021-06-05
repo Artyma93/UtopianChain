@@ -12,5 +12,6 @@ namespace UtopianChain.API.Models
         public int Id { get; set; }
         public string Description { get; set; }
         public int State { get; set; }
+        public string VotingOption { get; set; }
     }
 }
