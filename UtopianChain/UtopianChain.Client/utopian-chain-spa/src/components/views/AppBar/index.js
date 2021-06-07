@@ -20,6 +20,7 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 // import ImageLogoView from "../../../components/views/ImageLogoView";
 import Container from "@material-ui/core/Container";
 // import LogoutContainer from "../../Auth/Logout/LogoutContainer/LogoutContainer";
@@ -36,6 +37,13 @@ import {
 } from "../../../utils/theme/theme";
 // import { themeMode } from "../../../App";
 import WbSunnyIcon from "@material-ui/icons/WbSunny";
+import { useSelector } from "react-redux";
+import { signoutRedirect } from "../../../services/userService";
+import { LoginButtonContainer } from "../../../LoginButtonContainer";
+
+function logout() {
+  signoutRedirect();
+}
 
 const useStyles = makeStyles((theme) => ({
   grow: {
@@ -102,6 +110,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PrimarySearchAppBar() {
+  const user = useSelector((state) => state.auth.user);
   // const [theme, toggleThemeMode] = useThemeMode();
   // const themeMode = useThemeMode();
   const classes = useStyles();
@@ -214,12 +223,10 @@ export default function PrimarySearchAppBar() {
                       UtopianChain
                     </Typography>
                   </Grid>
-                  <Grid item xs={2}>
-
-                    </Grid>
+                  <Grid item xs={2}></Grid>
                   <Grid item xs={6}>
                     {/* <AuthenticatedTemplate> */}
-                      {/* <div className={classes.search}>
+                    {/* <div className={classes.search}>
                         <div className={classes.searchIcon}>
                           <SearchIcon />
                         </div>
@@ -244,7 +251,7 @@ export default function PrimarySearchAppBar() {
                   alignItems="center"
                 >
                   {/* <AuthenticatedTemplate> */}
-                    {/* <Grid item xs={4}>
+                  {/* <Grid item xs={4}>
                       <IconButton
                         aria-label="show 17 new notifications"
                         color="inherit"
@@ -268,18 +275,18 @@ export default function PrimarySearchAppBar() {
                         </IconButton>
                       </div>
                     </Grid>  */}
-                    {/* <Grid item xs={4}>
+                  {/* <Grid item xs={4}>
                       <FormControlLabel
                         control={<Switch onClick={() => {toggleThemeMode()}} />}
                       />
                     </Grid> */}
-                    {/* <Grid item xs={4}>
+                  {/* <Grid item xs={4}>
                       <FormControlLabel
                         control={<Switch onClick={() => {themeMode.toggleThemeMode()}} />}
                       />
                     </Grid> */}
 
-                    {/* <Grid item xs={4}>
+                  {/* <Grid item xs={4}>
                       <IconButton aria-label="delete">
                         <WbSunnyIcon
                           onClick={() => {
@@ -288,9 +295,21 @@ export default function PrimarySearchAppBar() {
                         />
                       </IconButton>
                     </Grid> */}
-                    <Grid item xs={4}>
-                      {/* <LogoutContainer /> */}
-                    </Grid>
+                  <Grid item xs={4}>
+                    {user ? (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        endIcon={<ExitToAppIcon />}
+                        onClick={() => logout()}
+                      >
+                        Выход
+                      </Button>
+                    ) : (
+                      <div></div>
+                    )}
+                    {/* <LogoutContainer /> */}
+                  </Grid>
                   {/* </AuthenticatedTemplate> */}
                 </Grid>
               </Grid>

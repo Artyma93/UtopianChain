@@ -10,14 +10,16 @@ import { Login } from "./components/auth/login";
 
 // const authService = new AuthService();
 
-export const LoginButton = () => {
+export const LoginButton = (props) => {
+  const { login } = props;
+
   return (
     <>
       <Button
         variant="contained"
         color="primary"
         endIcon={<ExitToAppIcon />}
-        onClick={Login}
+        onClick={login}
       >
         Вход
       </Button>

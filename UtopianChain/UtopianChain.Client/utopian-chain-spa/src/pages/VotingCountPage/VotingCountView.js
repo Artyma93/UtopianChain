@@ -68,7 +68,7 @@ export function VotingCountView(props) {
               </TableContainer>
             </React.Fragment>
           ) : (
-            <p className="App-intro">Загрузка бюджетов</p>
+            <p className="App-intro">Загрузка</p>
           )}
         </div>
       </Container>

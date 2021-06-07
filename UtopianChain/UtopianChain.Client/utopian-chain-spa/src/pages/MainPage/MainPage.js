@@ -24,14 +24,7 @@ export class MainPage extends Component {
     return (
       <>
         <MainLayout>
-          <Votes />
-          <p />
-          <LoginButton />
-          <p/>
-          <LogoutButton />
-<p />
-
-<CallApi2Button />
+         
         </MainLayout>
       </>
     );

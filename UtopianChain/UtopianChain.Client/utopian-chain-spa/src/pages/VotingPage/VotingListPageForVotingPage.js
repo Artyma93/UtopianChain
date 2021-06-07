@@ -8,8 +8,7 @@ export class VotingListPageForVotingPage extends Component {
     return (
       <>
         <MainLayout>
-        <p>VotingListPageForVotingPage</p>
-          <VotingListContainer midleLink={midleLink}/>
+          <VotingListContainer midleLink={midleLink} />
         </MainLayout>
       </>
     );

@@ -17,14 +17,12 @@ import {  WebStorageStateStore } from "oidc-client";
 //   };
   
 export const IDENTITY_CONFIG = {
-  userStore: new WebStorageStateStore({ store: window.localStorage }),
   authority: "https://localhost:44325",
   client_id: "client_id_js",
-  response_type: "code",
+  redirect_uri: "http://localhost:3000/signin-oidc",
+  response_type: "id_token token",
   scope: "openid profile OrdersAPI",
-  redirect_uri: "http://localhost:3000/callback",
-  silent_redirect_uri: "http://localhost:3000/refresh",
-  post_logout_redirect_uri: "http://localhost:3000/index.html",
+  post_logout_redirect_uri: "http://localhost:3000/signout-oidc",
 };
 
   export const METADATA_OIDC = {
