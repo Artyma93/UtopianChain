@@ -19,23 +19,34 @@ namespace UtopianChain.IdentityServer
         public static IEnumerable<Client> GetClients() =>
             new List<Client>
             {
-                        //new Client
-                        //{
-                        //    ClientId = "client_id_js",
-                        //    RequireClientSecret = false,
-                        //    RequireConsent = false,
-                        //    RequirePkce = true,
-                        //    AllowedGrantTypes = GrantTypes.Code,
-                        //    AllowedCorsOrigins = { "https://localhost:9001" },
-                        //    RedirectUris = { "https://localhost:9001/callback.html", "https://localhost:9001/refresh.html" },
-                        //    PostLogoutRedirectUris = { "https://localhost:9001/index.html" },
-                        //    AllowedScopes =
-                        //    {
-                        //        "OrdersAPI",
-                        //        IdentityServerConstants.StandardScopes.OpenId,
-                        //        IdentityServerConstants.StandardScopes.Profile,
-                        //    }
-                        //},
+                        new Client
+                        {
+                            ClientId = "client_id_js",
+                            RequireClientSecret = false,
+                            RequireConsent = false,
+                            RequirePkce = true,
+                            //AllowedGrantTypes = GrantTypes.Code,
+                            AllowedCorsOrigins = { "http://localhost:3000" },
+                            //AllowedCorsOrigins = { "https://localhost:9001" },
+                            //RedirectUris = { "http://localhost:3000/callback", "http://localhost:3000/refresh" },
+                            //RedirectUris = { "https://localhost:9001/callback.html", "https://localhost:9001/refresh.html" },
+                            //PostLogoutRedirectUris = { "http://localhost:3000" },
+                            //PostLogoutRedirectUris = { "https://localhost:9001/index.html" },
+                            AllowedScopes =
+                            {
+                                "OrdersAPI",
+                                IdentityServerConstants.StandardScopes.OpenId,
+                                IdentityServerConstants.StandardScopes.Profile,
+                            },
+                            ClientUri = "http://localhost:3000",
+                            AllowedGrantTypes = GrantTypes.Implicit,
+                            RedirectUris =
+                            {
+                                "http://localhost:3000/signin-oidc",
+                            },
+                            PostLogoutRedirectUris = { "http://localhost:3000/signout-oidc" },
+                            AllowAccessTokensViaBrowser = true
+                        },
                         //new Client
                         //{
                         //    ClientId = "client_id_swagger",

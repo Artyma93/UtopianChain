@@ -8,5 +8,7 @@ namespace UtopianChain.API.Models
     public class BlockInput
     {
         public string Data { get; set; }
+
+        public int Election { get; set; }
     }
 }

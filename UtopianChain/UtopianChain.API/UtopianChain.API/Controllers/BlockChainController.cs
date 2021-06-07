@@ -109,6 +109,7 @@ namespace UtopianChain.API.Controllers
         public async Task<Block> Create([FromBody] BlockInput blockInput)
         {
             var data = blockInput.Data;
+            int electionId = blockInput.Election;
 
             Block lastBlock = context.Blocks.OrderBy(_ => _.Id).LastOrDefault();
             if (lastBlock == null)
@@ -125,7 +126,7 @@ namespace UtopianChain.API.Controllers
 
             //var previousHash = lastBlock.Hash.ToString();
 
-            var block = blockFactory.CreateBlock(timeStamp, lastBlock, data);
+            var block = blockFactory.CreateBlock(timeStamp, lastBlock, data, electionId);
             block.Mine(2);
             context.Blocks.Add(block);
             await context.SaveChangesAsync();
@@ -287,7 +288,7 @@ namespace UtopianChain.API.Controllers
             else
             {
                 var localListElections = context.Elections.Select(_ => _).ToList();
-                
+
                 //delete
                 for (int i = 0; i <= localListElections.Count - 1; i++)
                 {
@@ -397,6 +398,61 @@ namespace UtopianChain.API.Controllers
                                             );
 
             return votes;
+        }
+
+        [HttpGet]
+        //[HttpPost]
+        [Route("[action]/{id?}")]
+        //public IQueryable<Vote> CountingVotes(int idElections)
+        public IQueryable<Vote> CountingVotesByElection(int id)
+        {
+            var votes = context.Blocks.Where(_ => _.Election == id).GroupBy(_ => _.Data)
+                                            .Select(s => new Vote
+                                            {
+                                                Choice = s.Key,
+                                                ChoiceCount = s.Count()
+                                            }
+                                            );
+
+            return votes;
+        }
+
+        [HttpGet]
+        //[HttpPost]
+        [Authorize]
+        [Route("[action]/{id?}")]
+        //public IQueryable<Vote> CountingVotes(int idElections)
+        public IQueryable<Vote> CountingVotesByElectionAuth(int id)
+        {
+            var votes = context.Blocks.Where(_ => _.Election == id).GroupBy(_ => _.Data)
+                                            .Select(s => new Vote
+                                            {
+                                                Choice = s.Key,
+                                                ChoiceCount = s.Count()
+                                            }
+                                            );
+
+            return votes;
+        }
+
+        [HttpGet]
+        //[Authorize]
+        [Route("[action]")]
+        public IQueryable<Block> Blocks()
+        {
+            var votes = context.Blocks;
+
+            return votes;
+        }
+
+        [HttpGet]
+        //[Authorize]
+        [Route("[action]")]
+        public IQueryable<Election> Elections()
+        {
+            var elections = context.Elections;
+
+            return elections;
         }
     }
 }

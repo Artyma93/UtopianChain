@@ -414,8 +414,6 @@ D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.Id
 D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\refs\System.Text.Encoding.CodePages.dll
 D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\refs\System.Text.Encoding.dll
 D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\refs\System.Text.Encoding.Extensions.dll
-D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\refs\System.Text.Encodings.Web.dll
-D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\refs\System.Text.Json.dll
 D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\refs\System.Text.RegularExpressions.dll
 D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\refs\System.Threading.Channels.dll
 D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\refs\System.Threading.dll
@@ -482,3 +480,8 @@ D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.Id
 D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\tr\Microsoft.CodeAnalysis.CSharp.resources.dll
 D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\zh-Hans\Microsoft.CodeAnalysis.CSharp.resources.dll
 D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\zh-Hant\Microsoft.CodeAnalysis.CSharp.resources.dll
+D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\obj\Debug\net5.0\Razor\Views\Auth\Login.cshtml.g.cs
+D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\obj\Debug\net5.0\Razor\Views\Site\Index.cshtml.g.cs
+D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.InMemory.dll
+D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\System.Text.Encodings.Web.dll
+D:\AAA\Max\UtopianChain\UtopianChain\UtopianChain.IdentityServer\UtopianChain.IdentityServer\bin\Debug\net5.0\System.Text.Json.dll

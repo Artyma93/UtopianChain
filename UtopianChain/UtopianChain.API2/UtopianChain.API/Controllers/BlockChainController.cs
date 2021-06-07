@@ -403,5 +403,60 @@ namespace UtopianChain.API.Controllers
 
             return votes;
         }
+
+        [HttpGet]
+        //[HttpPost]
+        [Route("[action]/{id?}")]
+        //public IQueryable<Vote> CountingVotes(int idElections)
+        public IQueryable<Vote> CountingVotesByElection(int id)
+        {
+            var votes = context.Blocks.Where(_ => _.Election == id).GroupBy(_ => _.Data)
+                                            .Select(s => new Vote
+                                            {
+                                                Choice = s.Key,
+                                                ChoiceCount = s.Count()
+                                            }
+                                            );
+
+            return votes;
+        }
+
+        [HttpGet]
+        //[HttpPost]
+        [Authorize]
+        [Route("[action]/{id?}")]
+        //public IQueryable<Vote> CountingVotes(int idElections)
+        public IQueryable<Vote> CountingVotesByElectionAuth(int id)
+        {
+            var votes = context.Blocks.Where(_ => _.Election == id).GroupBy(_ => _.Data)
+                                            .Select(s => new Vote
+                                            {
+                                                Choice = s.Key,
+                                                ChoiceCount = s.Count()
+                                            }
+                                            );
+
+            return votes;
+        }
+
+        [HttpGet]
+        //[Authorize]
+        [Route("[action]")]
+        public IQueryable<Block> Blocks()
+        {
+            var votes = context.Blocks;
+
+            return votes;
+        }
+
+        [HttpGet]
+        //[Authorize]
+        [Route("[action]")]
+        public IQueryable<Election> Elections()
+        {
+            var elections = context.Elections;
+
+            return elections;
+        }
     }
 }

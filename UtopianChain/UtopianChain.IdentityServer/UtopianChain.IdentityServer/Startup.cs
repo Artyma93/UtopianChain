@@ -37,8 +37,29 @@ namespace UtopianChain.IdentityServer
                        .WithExposedHeaders("WWW-Authenticate");
             }));
 
+            services.AddDbContext<ApplicationMemoryDbContext>(config =>
+            {
+                config.UseInMemoryDatabase("MEMORY");
+            })
+                .AddIdentity<IdentityUser, IdentityRole>(config =>
+                {
+                    config.Password.RequireDigit = false;
+                    config.Password.RequireLowercase = false;
+                    config.Password.RequireNonAlphanumeric = false;
+                    config.Password.RequireUppercase = false;
+                    config.Password.RequiredLength = 6;
+                })
+                .AddEntityFrameworkStores<ApplicationMemoryDbContext>();
+
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.LoginPath = "/Auth/Login";
+                config.LogoutPath = "/Auth/Logout";
+                config.Cookie.Name = "IdentityServer.Cookies";
+            });
+
             services.AddIdentityServer()
-                //.AddAspNetIdentity<IdentityUser>()
+                .AddAspNetIdentity<IdentityUser>()
                 .AddInMemoryClients(ConfigurationIdentityServer.GetClients())
                 .AddInMemoryApiResources(ConfigurationIdentityServer.GetApiResources())
                 .AddInMemoryIdentityResources(ConfigurationIdentityServer.GetIdentityResources())
